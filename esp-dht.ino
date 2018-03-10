@@ -44,12 +44,8 @@ void setup() {
 	while (WiFi.status() != WL_CONNECTED) {
 		Serial.print(".");
 		LEDflash(500);
-		//delay(500);
-		//LEDflash(500);
 	}
-	//LEDflash(500);
-	//LEDflash(200);
-	//LEDflash(500);
+
 	Serial.println("");
 	Serial.println("WiFi connected");
 
@@ -150,7 +146,7 @@ void loop() {
 				}
 				else if (c != '\r') {
 					// when finds a character on the current line
-					blank_line = false;
+				        blank_line = false;
 				}
 			}
 		}
@@ -163,27 +159,15 @@ void loop() {
 }
 
 void LEDflash(int sleepDelay) {
-	//Serial.println("LED umschalten 1");
 	digitalWrite(LEDPin, !digitalRead(LEDPin));
 	delay(sleepDelay/2);
-	//Serial.println("LED umschalten 2");
 	digitalWrite(LEDPin, !digitalRead(LEDPin));
 	delay(sleepDelay/2);
 }
 
 void LEDon() {
-	Serial.println("LED on");
 	digitalWrite(LEDPin, LOW);
 }
 void LEDoff() {
-	Serial.println("LED off");
 	digitalWrite(LEDPin, HIGH);
-}
-
-String DisplayAddress(IPAddress address)
-{
-	return String(address[0]) + "." +
-		String(address[1]) + "." +
-		String(address[2]) + "." +
-		String(address[3]);
 }
