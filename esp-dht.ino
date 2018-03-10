@@ -146,7 +146,7 @@ void loop() {
 				}
 				else if (c != '\r') {
 					// when finds a character on the current line
-				        blank_line = false;
+					blank_line = false;
 				}
 			}
 		}
