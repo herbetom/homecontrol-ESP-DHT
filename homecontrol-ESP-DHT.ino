@@ -1,4 +1,9 @@
-#include <ESP8266WiFi.h>
+#include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
+
+#include <DNSServer.h>
+#include <ESP8266WebServer.h>
+#include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager
+
 #include "DHT.h"
 #include <ArduinoJson.h>
 
@@ -36,25 +41,24 @@ void setup() {
 	pinMode(LEDPin, OUTPUT);
 	LEDoff();
 	Serial.begin(115200);
-	delay(1000);
-	Serial.print("\n\nConnecting to ");
-	Serial.println(ssid);
-	WiFi.begin(ssid, password);
+	
+  WiFiManager wifiManager;
+  //reset settings - for testing
+  //wifiManager.resetSettings();
+  delay(1000);
 
-	while (WiFi.status() != WL_CONNECTED) {
-		Serial.print(".");
-		LEDflash(500);
-	}
-
-	Serial.println("");
-	Serial.println("WiFi connected");
-
-	server.begin();
-	Serial.println("Web server running. Waiting for the ESP IP...");
-	delay(10000);
-	localIP = WiFi.localIP();
-	Serial.println(localIP);
-	LEDon();
+  wifiManager.setAPCallback(configModeCallback);
+  
+  if (!wifiManager.autoConnect()) {
+    Serial.println("failed to connect and hit timeout");
+    ESP.reset();
+    delay(1000);
+  }
+  Serial.println("connected to ");
+  
+  server.begin();
+  Serial.println("Web server running");
+  LEDon();
 	dht.begin();
 }
 
@@ -97,7 +101,8 @@ void loop() {
 						root["message"] = "Failed to read from DHT sensor!";
 
 						JsonObject& data = root.createNestedObject("data");
-						
+           
+						root["millisSinceBoot"] = millis();
 
 						root.printTo(Serial);
 						root.printTo(client);
@@ -156,6 +161,13 @@ void loop() {
 		Serial.println("\nClient disconnected.");
 		LEDflash(200);
 	}
+}
+
+//gets called when WiFiManager enters configuration mode
+void configModeCallback (WiFiManager *myWiFiManager) {
+  Serial.println("Entered config mode");
+  Serial.println(WiFi.softAPIP());
+  Serial.println(myWiFiManager->getConfigPortalSSID());
 }
 
 void LEDflash(int sleepDelay) {
