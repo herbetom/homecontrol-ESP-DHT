@@ -11,7 +11,7 @@ void LEDflash(int sleepDelay = 300);
 
 // Replace with your network details
 const char* ssid = "SSID";
-const char* password = "password";
+const char* password = "passwordHere";
 
 // Web Server on port 80
 WiFiServer server(80);
